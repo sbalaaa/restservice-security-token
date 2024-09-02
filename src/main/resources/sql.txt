@@ -1,0 +1,118 @@
+------	My SQL -----------
+-- create database training;
+-- use training;
+
+
+-- DROP TABLE DEPARTMENTS;
+
+CREATE TABLE DEPARTMENTS (
+    DEPARTMENT_ID     INT  NOT NULL AUTO_INCREMENT, 
+    DEPARTMENT_NAME   VARCHAR(40)     NOT NULL,
+    CREATED_BY 		  VARCHAR(20),
+    PRIMARY KEY (DEPARTMENT_ID),                
+    UNIQUE  KEY (DEPARTMENT_NAME)               
+);
+
+-- DROP TABLE EMPLOYEES;
+
+-------  One to Many example table setup EMPLOYEES
+
+CREATE TABLE EMPLOYEES (
+    EMPLOYEE_ID       INT             NOT NULL AUTO_INCREMENT,
+    FIRST_NAME        VARCHAR(14)     NOT NULL,
+    LAST_NAME         VARCHAR(16)     NOT NULL,
+    GENDER            ENUM ('M','F')  NOT NULL,
+    AGE 	      	  INT 	      	  NOT NULL,
+    EMAIL             VARCHAR(20)     NOT NULL,
+    PHONE_NUMBER      VARCHAR(16)     NOT NULL,	
+    HIRE_DATE         DATE            NOT NULL,
+    SALARY 	     	  INT 	      	  NOT NULL,	
+    CREATED_BY 		  VARCHAR(20),
+    DEPARTMENT_ID_FK  INT 	      	  NOT NULL,
+    PRIMARY KEY (EMPLOYEE_ID)                  
+);
+
+ALTER TABLE EMPLOYEES ADD FOREIGN KEY (DEPARTMENT_ID_FK) REFERENCES DEPARTMENTS(DEPARTMENT_ID);
+
+------- Insert script for departments
+
+INSERT INTO DEPARTMENTS(DEPARTMENT_NAME,CREATED_BY) VALUES 
+('Physics','ADMIN');
+INSERT INTO DEPARTMENTS(DEPARTMENT_NAME,CREATED_BY) VALUES 
+('CS','ROOT');
+INSERT INTO DEPARTMENTS(DEPARTMENT_NAME,CREATED_BY) VALUES 
+('Maths','ROOT');
+
+------- Insert script for employees
+
+
+INSERT INTO EMPLOYEES(FIRST_NAME,LAST_NAME,GENDER,AGE,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,CREATED_BY,DEPARTMENT_ID_FK) VALUES 
+('Raja','Ravi','M',32,'le1@gmail.com','1234567891','2019-02-01',9000,'ADMIN',1);
+
+INSERT INTO EMPLOYEES(FIRST_NAME,LAST_NAME,GENDER,AGE,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,CREATED_BY,DEPARTMENT_ID_FK) VALUES 
+('Mani','Sankar','M',28,'le2@gmail.com','1234567892','2019-03-01',8000,'ADMIN',3);
+
+
+INSERT INTO EMPLOYEES(FIRST_NAME,LAST_NAME,GENDER,AGE,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,CREATED_BY,DEPARTMENT_ID_FK) VALUES 
+('Sekar','Durai','M',35,'le7@gmail.com','1234567896','2016-02-01',10000,'ADMIN',1);
+
+INSERT INTO EMPLOYEES(FIRST_NAME,LAST_NAME,GENDER,AGE,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,CREATED_BY,DEPARTMENT_ID_FK) VALUES 
+('Durai','Sekar','M',38,'le8@gmail.com','1234567897','2016-02-01',20000,'ADMIN',3);
+
+INSERT INTO EMPLOYEES(FIRST_NAME,LAST_NAME,GENDER,AGE,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,CREATED_BY,DEPARTMENT_ID_FK) VALUES 
+('Teena','Jacob','F',38,'le5@gmail.com','123456000','2015-02-01',35000,'ADMIN',3);
+
+
+-------Script for Security Token implementation
+
+
+CREATE TABLE users (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(50) DEFAULT NULL,
+  password VARCHAR(120) DEFAULT NULL,
+  username VARCHAR(20) DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY username_unique (username),
+  UNIQUE KEY email_unique (email)
+);
+
+
+CREATE TABLE roles (
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(20) DEFAULT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE user_roles (
+  user_id BIGINT NOT NULL,
+  role_id INT NOT NULL,
+  PRIMARY KEY (user_id,role_id),
+  CONSTRAINT user_roles_roles_fk FOREIGN KEY (role_id) REFERENCES roles (id),
+  CONSTRAINT user_roles_users_fk FOREIGN KEY (user_id) REFERENCES users (id)
+) ;
+
+
+CREATE TABLE refreshtoken (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  expiry_date DATETIME NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  user_id BIGINT DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY token_unique (token),
+  CONSTRAINT users_fk FOREIGN KEY (user_id) REFERENCES users (id)
+) ;
+
+
+INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+INSERT INTO roles(name) VALUES('ROLE_USER');
+INSERT INTO roles(name) VALUES('ROLE_CREATE');
+INSERT INTO roles(name) VALUES('ROLE_UPDATE');
+INSERT INTO roles(name) VALUES('ROLE_DELETE');
+
+--
+
+select * from users;
+select * from roles;
+select * from user_roles order by user_id;
+select * from refreshtoken;
+--------------------------------------------------------
